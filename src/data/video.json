@@ -1,0 +1,76 @@
+[
+  {
+    "id": "video-001",
+    "title": "Elysium Echoes",
+    "description": "A cinematic exploration of light and shadow in urban landscapes. Focused on rhythm, atmospheric color grading, and seamless match cuts to build a mood of reflective isolation.",
+    "category": "Cinematic",
+    "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
+    "featured": true,
+    "featuredSlot": 1,
+    "createdAt": "2026-05-10"
+  },
+  {
+    "id": "video-002",
+    "title": "Horizon Redefined",
+    "description": "High-energy brand campaign video for modern activewear. Combining fast-paced rhythmic cuts, sound design-driven pacing, and clean typographic overlays for high visual impact.",
+    "category": "Commercial",
+    "videoUrl": "https://www.w3schools.com/html/movie.mp4",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
+    "featured": true,
+    "featuredSlot": 2,
+    "createdAt": "2026-06-15"
+  },
+  {
+    "id": "video-003",
+    "title": "Midnight Neon",
+    "description": "Stylized music video featuring dynamic speed ramps, neon color grading, and beat-locked transitions that build a dreamlike nocturnal atmosphere and flow.",
+    "category": "Music Video",
+    "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
+    "featured": true,
+    "featuredSlot": 3,
+    "createdAt": "2026-07-20"
+  },
+  {
+    "id": "video-004",
+    "title": "Whispers of the Wind",
+    "description": "A slow-paced, emotional documentary excerpt highlighting rural craftspeople. Built with natural ambient sound design, long landscape takes, and intimate close-ups.",
+    "category": "Documentary",
+    "videoUrl": "https://www.w3schools.com/html/movie.mp4",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=80",
+    "featured": true,
+    "featuredSlot": 4,
+    "createdAt": "2026-08-01"
+  },
+  {
+    "id": "video-005",
+    "title": "Aura Fashion Showcase",
+    "description": "High-fashion showcase video highlighting luxury apparel textures and flowing fabrics. Uses smooth slow-motion and soft-glow lenses to capture details.",
+    "category": "Commercial",
+    "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
+    "featured": false,
+    "createdAt": "2026-04-18"
+  },
+  {
+    "id": "video-006",
+    "title": "Rhythms of the Street",
+    "description": "Energetic montage capturing street dance culture and movements. Employs speed ramps, motion tracking blur, and sharp audio synchronization.",
+    "category": "Music Video",
+    "videoUrl": "https://www.w3schools.com/html/movie.mp4",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80",
+    "featured": false,
+    "createdAt": "2026-03-25"
+  },
+  {
+    "id": "video-007",
+    "title": "Forgotten Paths",
+    "description": "Deep narrative short film trailer. Muted tones, suspenseful framing, and lingering character close-ups that emphasize emotional tension.",
+    "category": "Cinematic",
+    "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+    "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
+    "featured": false,
+    "createdAt": "2026-02-12"
+  }
+]

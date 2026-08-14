@@ -54,6 +54,16 @@
       "thumbnailUrl": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
       "featured": false,
       "createdAt": "2026-04-18"
+    },
+    {
+      "id": "video-1786716722288",
+      "title": "NFS",
+      "description": "NFS Most wanted BMW M3 🔥❤️‍🔥",
+      "category": "Cinematic",
+      "videoUrl": "https://drive.google.com/file/d/1cmbGfkFZQ2cKW1vIIiXLO1bYw_wjaLQ0/view?usp=sharing",
+      "thumbnailUrl": "https://drive.google.com/file/d/1ZmvlOU5v5KPmqpKj1IdFvPL7FMmPiZ_J/view?usp=sharing",
+      "featured": false,
+      "createdAt": "2026-08-14"
     }
   ]
 }

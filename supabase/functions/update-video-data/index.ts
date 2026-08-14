@@ -281,10 +281,16 @@ Deno.serve(async (req) => {
 
     } else if (action === 'deleteSlot') {
       const index = Number(payload.index);
-      if (isNaN(index) || index < 0 || index >= slotsCount) {
+      if (isNaN(index) || index < 0) {
         return new Response(
           JSON.stringify({ error: `Invalid delete slot index: ${index}` }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (index >= slotsCount) {
+        return new Response(
+          JSON.stringify({ success: true, message: 'Slot already deleted on the server.' }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       if (slotsCount <= 1) {

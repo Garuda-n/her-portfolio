@@ -65,6 +65,16 @@
       "featured": true,
       "createdAt": "2026-08-14",
       "featuredSlot": 4
+    },
+    {
+      "id": "video-1786717004572",
+      "title": "NFS",
+      "description": "NFS Most wanted. BMW 3 ❤️‍🔥🔥",
+      "category": "Cinematic",
+      "videoUrl": "https://drive.google.com/file/d/1cmbGfkFZQ2cKW1vIIiXLO1bYw_wjaLQ0/view?usp=sharing",
+      "thumbnailUrl": "https://drive.google.com/file/d/1ZmvlOU5v5KPmqpKj1IdFvPL7FMmPiZ_J/view?usp=sharing",
+      "featured": false,
+      "createdAt": "2026-08-14"
     }
   ]
 }

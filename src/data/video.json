@@ -56,16 +56,6 @@
       "createdAt": "2026-04-18"
     },
     {
-      "id": "video-006",
-      "title": "Rhythms of the Street",
-      "description": "Energetic montage capturing street dance culture and movements. Employs speed ramps, motion tracking blur, and sharp audio synchronization.",
-      "category": "Music Video",
-      "videoUrl": "https://www.w3schools.com/html/movie.mp4",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80",
-      "featured": false,
-      "createdAt": "2026-03-25"
-    },
-    {
       "id": "video-007",
       "title": "Forgotten Paths",
       "description": "Deep narrative short film trailer. Muted tones, suspenseful framing, and lingering character close-ups that emphasize emotional tension.",

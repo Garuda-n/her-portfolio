@@ -33,8 +33,9 @@ export const Navbar: React.FC = () => {
         </a>
 
         <div className={`navbar-links ${isMobileMenuOpen ? 'navbar-links-active' : ''}`}>
-          <a href="#featured" onClick={(e) => { e.preventDefault(); scrollToSection('featured'); }}>Featured</a>
+          <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a>
           <a href="#work" onClick={(e) => { e.preventDefault(); scrollToSection('work'); }}>Portfolio</a>
+          <a href="#featured" onClick={(e) => { e.preventDefault(); scrollToSection('featured'); }}>Featured Work</a>
           <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About</a>
           <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
         </div>

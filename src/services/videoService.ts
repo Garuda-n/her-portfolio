@@ -1,7 +1,11 @@
 import type { Video } from '../types/video';
 import videosData from '../data/video.json';
 
-const videos: Video[] = videosData as Video[];
+const videos: Video[] = Array.isArray(videosData) 
+  ? (videosData as Video[]) 
+  : (videosData && typeof videosData === 'object' && Array.isArray((videosData as any).videos)) 
+    ? ((videosData as any).videos as Video[]) 
+    : [];
 
 export const getVideos = (): Video[] => {
   return videos;
@@ -20,4 +24,11 @@ export const getVideoById = (id: string): Video | undefined => {
 export const getCategories = (): string[] => {
   const categories = videos.map(v => v.category);
   return Array.from(new Set(categories));
+};
+
+export const getSlotsCount = (): number => {
+  if (videosData && typeof videosData === 'object' && 'slotsCount' in videosData) {
+    return Number((videosData as any).slotsCount) || 4;
+  }
+  return 4;
 };

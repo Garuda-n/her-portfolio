@@ -116,7 +116,9 @@ export const AllVideosTab: React.FC<AllVideosTabProps> = ({ onPreviewVideo }) =>
                       <span className="toggle-label">{video.featured ? 'ON' : 'OFF'}</span>
                     </button>
                     {video.featured && (
-                      <span className="table-slot-badge">Slot 0{video.featuredSlot}</span>
+                      <span className="table-slot-badge">
+                        Slot {video.featuredSlot !== undefined && video.featuredSlot < 10 ? '0' + video.featuredSlot : video.featuredSlot}
+                      </span>
                     )}
                   </td>
                   <td>

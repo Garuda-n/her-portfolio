@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Video } from '../types/video';
-import { getVideos as initialFetch } from '../services/videoService';
+import { getVideos as initialFetch, getSlotsCount } from '../services/videoService';
 import { supabase } from '../services/supabaseClient';
 
 interface ToastData {
@@ -10,6 +10,7 @@ interface ToastData {
 
 interface VideoContextType {
   videos: Video[];
+  slotsCount: number;
   toast: ToastData | null;
   isSaving: boolean;
   addVideo: (video: Omit<Video, 'id' | 'createdAt' | 'featured' | 'featuredSlot'>) => Promise<boolean>;
@@ -17,6 +18,8 @@ interface VideoContextType {
   deleteVideo: (id: string) => Promise<boolean>;
   toggleFeatured: (id: string) => Promise<boolean>;
   updateFeaturedSlots: (newSlots: (Video | null)[]) => Promise<boolean>;
+  addSlot: () => Promise<boolean>;
+  deleteSlot: (index: number) => Promise<boolean>;
   showToast: (message: string, type: 'success' | 'error') => void;
 }
 
@@ -24,12 +27,14 @@ const VideoContext = createContext<VideoContextType | undefined>(undefined);
 
 export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [slotsCount, setSlotsCount] = useState<number>(4);
   const [toast, setToast] = useState<ToastData | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   // Initialize data on load
   useEffect(() => {
     setVideos(initialFetch());
+    setSlotsCount(getSlotsCount());
   }, []);
 
   const showToast = (message: string, type: 'success' | 'error') => {
@@ -172,14 +177,14 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     if (nextFeatured) {
       const featuredCount = videos.filter(v => v.featured).length;
-      if (featuredCount >= 4) {
-        showToast('Maximum of 4 featured videos reached. Remove one first.', 'error');
+      if (featuredCount >= slotsCount) {
+        showToast(`Maximum of ${slotsCount} featured videos reached. Remove one first.`, 'error');
         return false;
       }
 
       const busySlots = videos.filter(v => v.featured).map(v => v.featuredSlot);
       let freeSlot = 1;
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= slotsCount; i++) {
         if (!busySlots.includes(i)) {
           freeSlot = i;
           break;
@@ -243,9 +248,65 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return true;
   };
 
+  const addSlot = async (): Promise<boolean> => {
+    const previousSlotsCount = slotsCount;
+    // Optimistic UI update
+    setSlotsCount(prev => prev + 1);
+
+    const res = await invokePersistenceApi('addSlot', {});
+
+    if (!res.success) {
+      // Rollback optimistic state
+      setSlotsCount(previousSlotsCount);
+      showToast(res.error || 'Failed to add highlight slot on GitHub.', 'error');
+      return false;
+    }
+
+    showToast('Showcase slot added successfully.', 'success');
+    return true;
+  };
+
+  const deleteSlot = async (index: number): Promise<boolean> => {
+    if (slotsCount <= 1) {
+      showToast('Cannot delete the only remaining slot.', 'error');
+      return false;
+    }
+    const previousSlotsCount = slotsCount;
+    const previousVideos = [...videos];
+
+    // Optimistic UI update
+    setVideos(prev => 
+      prev.map(v => {
+        if (v.featured && typeof v.featuredSlot === 'number') {
+          if (v.featuredSlot === index + 1) {
+            return { ...v, featured: false, featuredSlot: undefined };
+          } else if (v.featuredSlot > index + 1) {
+            return { ...v, featuredSlot: v.featuredSlot - 1 };
+          }
+        }
+        return v;
+      })
+    );
+    setSlotsCount(prev => prev - 1);
+
+    const res = await invokePersistenceApi('deleteSlot', { index });
+
+    if (!res.success) {
+      // Rollback optimistic state
+      setVideos(previousVideos);
+      setSlotsCount(previousSlotsCount);
+      showToast(res.error || 'Failed to delete showcase slot on GitHub.', 'error');
+      return false;
+    }
+
+    showToast('Showcase slot deleted successfully.', 'success');
+    return true;
+  };
+
   return (
     <VideoContext.Provider value={{
       videos,
+      slotsCount,
       toast,
       isSaving,
       addVideo,
@@ -253,6 +314,8 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       deleteVideo,
       toggleFeatured,
       updateFeaturedSlots,
+      addSlot,
+      deleteSlot,
       showToast
     }}>
       {children}

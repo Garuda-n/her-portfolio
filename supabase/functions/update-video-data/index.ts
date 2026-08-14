@@ -91,11 +91,19 @@ Deno.serve(async (req) => {
     // Decode current base64 content safely to UTF-8 string
     const decodedBytes = decodeBase64(fileData.content.replace(/\s/g, ''));
     const currentContentStr = new TextDecoder().decode(decodedBytes);
-    let videos: Video[] = JSON.parse(currentContentStr);
+    const data = JSON.parse(currentContentStr);
 
-    if (!Array.isArray(videos)) {
+    let slotsCount = 4;
+    let videos: Video[] = [];
+
+    if (Array.isArray(data)) {
+      videos = data;
+    } else if (data && typeof data === 'object') {
+      slotsCount = Number(data.slotsCount) || 4;
+      videos = Array.isArray(data.videos) ? data.videos : [];
+    } else {
       return new Response(
-        JSON.stringify({ error: 'Invalid data format on GitHub: video.json must be an array.' }),
+        JSON.stringify({ error: 'Invalid video.json format on GitHub.' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -200,19 +208,19 @@ Deno.serve(async (req) => {
 
       const video = videos[index];
       if (!video.featured) {
-        // Toggle on: Check limit (max 4)
+        // Toggle on: Check limit (max slotsCount)
         const featuredCount = videos.filter(v => v.featured).length;
-        if (featuredCount >= 4) {
+        if (featuredCount >= slotsCount) {
           return new Response(
-            JSON.stringify({ error: 'Maximum featured slots filled (maximum 4 highlights allowed).' }),
+            JSON.stringify({ error: `Maximum featured slots filled (maximum ${slotsCount} highlights allowed).` }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
 
-        // Find first available slot (1 to 4)
+        // Find first available slot (1 to slotsCount)
         const activeSlots = videos.filter(v => v.featured).map(v => v.featuredSlot);
         let firstFreeSlot = 1;
-        for (let i = 1; i <= 4; i++) {
+        for (let i = 1; i <= slotsCount; i++) {
           if (!activeSlots.includes(i)) {
             firstFreeSlot = i;
             break;
@@ -228,12 +236,21 @@ Deno.serve(async (req) => {
       }
 
     } else if (action === 'updateFeaturedSlots') {
-      const newSlots = payload.newSlots as (string | null)[]; // Array of 4 video IDs or nulls
-      if (!Array.isArray(newSlots) || newSlots.length !== 4) {
+      let newSlots = payload.newSlots as (string | null)[]; // Array of slotsCount video IDs or nulls
+      if (!Array.isArray(newSlots)) {
         return new Response(
-          JSON.stringify({ error: 'Invalid slots structure: must be an array of length 4.' }),
+          JSON.stringify({ error: 'Invalid slots structure: must be an array.' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
+      }
+
+      // Handle mismatch between frontend slotsCount and backend slotsCount gracefully (e.g., due to caching/deployment delay)
+      if (newSlots.length < slotsCount) {
+        while (newSlots.length < slotsCount) {
+          newSlots.push(null);
+        }
+      } else if (newSlots.length > slotsCount) {
+        newSlots = newSlots.slice(0, slotsCount);
       }
 
       // Check for duplicate assignments
@@ -256,6 +273,39 @@ Deno.serve(async (req) => {
         }
       });
 
+    } else if (action === 'addSlot') {
+      slotsCount = slotsCount + 1;
+
+    } else if (action === 'deleteSlot') {
+      const index = Number(payload.index);
+      if (isNaN(index) || index < 0 || index >= slotsCount) {
+        return new Response(
+          JSON.stringify({ error: `Invalid delete slot index: ${index}` }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      if (slotsCount <= 1) {
+        return new Response(
+          JSON.stringify({ error: 'Cannot delete the only remaining slot.' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Unfeature any video at that slot number (which is index + 1)
+      // And shift all slots above it (slots > index + 1) down by 1
+      videos = videos.map(video => {
+        if (video.featured && typeof video.featuredSlot === 'number') {
+          if (video.featuredSlot === index + 1) {
+            return { ...video, featured: false, featuredSlot: undefined };
+          } else if (video.featuredSlot > index + 1) {
+            return { ...video, featuredSlot: video.featuredSlot - 1 };
+          }
+        }
+        return video;
+      });
+
+      slotsCount = slotsCount - 1;
+
     } else {
       return new Response(
         JSON.stringify({ error: `Unsupported action: ${action}` }),
@@ -264,10 +314,26 @@ Deno.serve(async (req) => {
     }
 
     // 6. Global checks on the final array
-    const finalFeatured = videos.filter(v => v.featured);
-    if (finalFeatured.length > 4) {
+    if (typeof slotsCount !== 'number' || !Number.isInteger(slotsCount) || slotsCount < 1) {
       return new Response(
-        JSON.stringify({ error: 'Integrity Error: Featured list exceeds 4 items.' }),
+        JSON.stringify({ error: 'Integrity Error: slotsCount must be an integer >= 1.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const videoIds = videos.map(v => v.id);
+    const uniqueVideoIds = new Set(videoIds);
+    if (uniqueVideoIds.size !== videoIds.length) {
+      return new Response(
+        JSON.stringify({ error: 'Integrity Error: Duplicate video IDs detected.' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const finalFeatured = videos.filter(v => v.featured);
+    if (finalFeatured.length > slotsCount) {
+      return new Response(
+        JSON.stringify({ error: `Integrity Error: Featured list exceeds ${slotsCount} items.` }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -282,7 +348,7 @@ Deno.serve(async (req) => {
     }
 
     // Check invalid slot values
-    const invalidSlot = activeSlots.find(s => typeof s !== 'number' || s < 1 || s > 4);
+    const invalidSlot = activeSlots.find(s => typeof s !== 'number' || s < 1 || s > slotsCount);
     if (invalidSlot !== undefined) {
       return new Response(
         JSON.stringify({ error: `Integrity Error: Invalid featured slot number: ${invalidSlot}.` }),
@@ -291,7 +357,7 @@ Deno.serve(async (req) => {
     }
 
     // 7. Serialize and encode UTF-8 JSON back to base64
-    const updatedContentStr = JSON.stringify(videos, null, 2);
+    const updatedContentStr = JSON.stringify({ slotsCount, videos }, null, 2);
     const base64Content = encodeBase64(new TextEncoder().encode(updatedContentStr));
 
     // 8. Commit changes back to GitHub Contents API

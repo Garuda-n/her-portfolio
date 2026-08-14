@@ -572,6 +572,9 @@ h1, h2, h3, h4, h5, h6 {
 .contact-methods {
   display: flex;
   justify-content: center;
+  align-items: center;
+  gap: 2.5rem;
+  flex-wrap: wrap;
 }
 
 .contact-btn {
@@ -2410,6 +2413,35 @@ h1, h2, h3, h4, h5, h6 {
   .login-glass-card {
     padding: 2.5rem 1.5rem;
   }
+}
+
+/* Button to delete individual highlight slot */
+.btn-delete-slot {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: transparent;
+  color: var(--text-muted);
+  border: none;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+  z-index: 5;
+}
+
+.btn-delete-slot:hover:not(:disabled) {
+  color: #ef4444;
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.btn-delete-slot:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 

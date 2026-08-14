@@ -8,7 +8,8 @@
       "category": "Cinematic",
       "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
       "thumbnailUrl": "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80",
-      "featured": false,
+      "featured": true,
+      "featuredSlot": 1,
       "createdAt": "2026-05-10"
     },
     {
@@ -18,7 +19,8 @@
       "category": "Commercial",
       "videoUrl": "https://www.w3schools.com/html/movie.mp4",
       "thumbnailUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-      "featured": false,
+      "featured": true,
+      "featuredSlot": 2,
       "createdAt": "2026-06-15"
     },
     {
@@ -29,8 +31,8 @@
       "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
       "thumbnailUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
       "featured": true,
-      "createdAt": "2026-07-20",
-      "featuredSlot": 3
+      "featuredSlot": 3,
+      "createdAt": "2026-07-20"
     },
     {
       "id": "video-004",
@@ -39,7 +41,8 @@
       "category": "Documentary",
       "videoUrl": "https://www.w3schools.com/html/movie.mp4",
       "thumbnailUrl": "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=80",
-      "featured": false,
+      "featured": true,
+      "featuredSlot": 4,
       "createdAt": "2026-08-01"
     },
     {
@@ -68,6 +71,7 @@
       "description": "Deep narrative short film trailer. Muted tones, suspenseful framing, and lingering character close-ups that emphasize emotional tension.",
       "category": "Cinematic",
       "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
+      "thumbnailUrl": "https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=800&q=80",
       "featured": false,
       "createdAt": "2026-02-12"
     }

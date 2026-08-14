@@ -2,12 +2,12 @@ import React, { useMemo } from 'react';
 import { useVideoContext } from '../../context/VideoContext';
 
 export const DashboardTab: React.FC = () => {
-  const { videos } = useVideoContext();
+  const { videos, slotsCount } = useVideoContext();
 
   const metrics = useMemo(() => {
     const total = videos.length;
     const featured = videos.filter(v => v.featured).length;
-    const availableFeatured = 4 - featured;
+    const availableFeatured = slotsCount - featured;
     
     // Category Breakdown
     const categoriesMap: Record<string, number> = {};
@@ -26,7 +26,7 @@ export const DashboardTab: React.FC = () => {
       availableFeatured,
       categoriesList
     };
-  }, [videos]);
+  }, [videos, slotsCount]);
 
   return (
     <div className="admin-dashboard">
@@ -57,12 +57,12 @@ export const DashboardTab: React.FC = () => {
           </div>
           <div className="metric-value-container">
             <span className="metric-value">{metrics.featured}</span>
-            <span className="metric-limit">/ 4 limit</span>
+            <span className="metric-limit">/ {slotsCount} limit</span>
           </div>
           <div className="metric-progress-wrapper">
             <div 
               className="metric-progress-bar accent-bar" 
-              style={{ width: `${(metrics.featured / 4) * 100}%` }}
+              style={{ width: `${slotsCount > 0 ? (metrics.featured / slotsCount) * 100 : 0}%` }}
             />
           </div>
         </div>

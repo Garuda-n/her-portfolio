@@ -3,20 +3,37 @@ import { useVideoContext } from '../../context/VideoContext';
 import type { Video } from '../../types/video';
 
 export const FeaturedTab: React.FC = () => {
-  const { videos, updateFeaturedSlots, isSaving } = useVideoContext();
+  const { videos, slotsCount, updateFeaturedSlots, addSlot, deleteSlot, isSaving } = useVideoContext();
   const [draggedOverSlot, setDraggedOverSlot] = useState<number | null>(null);
   const [showAssignDropdown, setShowAssignDropdown] = useState<number | null>(null);
 
-  // Extract videos currently in Slot 1, 2, 3, 4
+  // Extract videos currently in Slot 1, 2, ..., slotsCount
   const slots = useMemo(() => {
-    const list: (Video | null)[] = [null, null, null, null];
+    const list: (Video | null)[] = Array(slotsCount).fill(null);
     videos.forEach(v => {
-      if (v.featured && typeof v.featuredSlot === 'number' && v.featuredSlot >= 1 && v.featuredSlot <= 4) {
+      if (v.featured && typeof v.featuredSlot === 'number' && v.featuredSlot >= 1 && v.featuredSlot <= slotsCount) {
         list[v.featuredSlot - 1] = v;
       }
     });
     return list;
-  }, [videos]);
+  }, [videos, slotsCount]);
+
+  const handleDeleteSlot = async (idx: number, hasVideo: boolean, videoTitle?: string) => {
+    if (isSaving) return;
+    if (slotsCount <= 1) return;
+
+    if (hasVideo) {
+      const confirmDelete = window.confirm(
+        `Delete Slot 0${idx + 1}?\n\nThe video "${videoTitle}" currently assigned to this slot will be removed from the Featured Showcase. Videos in later slots will move up by one position.\n\nClick OK to confirm.`
+      );
+      if (!confirmDelete) return;
+    } else {
+      const confirmDelete = window.confirm(`Are you sure you want to delete empty Slot 0${idx + 1}?`);
+      if (!confirmDelete) return;
+    }
+
+    await deleteSlot(idx);
+  };
 
   // Unassigned available videos for the pool
   const unassignedVideos = useMemo(() => {
@@ -96,15 +113,25 @@ export const FeaturedTab: React.FC = () => {
 
   return (
     <div className="admin-featured-tab">
-      <div className="admin-tab-header">
-        <h3>Featured Work Showcase (Max 4 Highlights)</h3>
-        <p className="tab-subtitle-info">
-          Arrange the highlight slots by dragging videos directly between them, or dragging unassigned cuts into the slot boxes.
-        </p>
+      <div className="admin-tab-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem' }}>
+        <div>
+          <h3>Featured Work Showcase ({slotsCount} Highlight Slots)</h3>
+          <p className="tab-subtitle-info">
+            Arrange the highlight slots by dragging videos directly between them, or dragging unassigned cuts into the slot boxes.
+          </p>
+        </div>
+        <button 
+          className="btn btn-primary" 
+          onClick={addSlot}
+          disabled={isSaving}
+          style={{ fontSize: '0.9rem', padding: '0.6rem 1.2rem', marginTop: '0.2rem' }}
+        >
+          {isSaving ? 'Saving...' : '＋ Add Highlight Slot'}
+        </button>
       </div>
 
       <div className="featured-workspace-layout">
-        {/* The 4 Highlights Slots */}
+        {/* The Highlights Slots */}
         <div className="slots-wrapper">
           {slots.map((video, idx) => (
             <div 
@@ -114,7 +141,20 @@ export const FeaturedTab: React.FC = () => {
               onDragLeave={handleDragLeave}
               onDrop={(e) => handleDrop(e, idx)}
             >
-              <div className="slot-badge">Slot 0{idx + 1}</div>
+              <div className="slot-badge">Slot {(idx + 1) < 10 ? '0' + (idx + 1) : idx + 1}</div>
+
+              {slotsCount > 1 && (
+                <button
+                  type="button"
+                  className="btn-delete-slot"
+                  onClick={() => handleDeleteSlot(idx, !!video, video?.title)}
+                  disabled={isSaving}
+                  title={`Delete Slot ${(idx + 1) < 10 ? '0' + (idx + 1) : idx + 1}`}
+                  aria-label={`Delete Slot ${(idx + 1) < 10 ? '0' + (idx + 1) : idx + 1}`}
+                >
+                  🗑
+                </button>
+              )}
 
               {video ? (
                 <div 
@@ -136,7 +176,7 @@ export const FeaturedTab: React.FC = () => {
                     className="btn-remove-slot" 
                     onClick={() => handleRemoveFromSlot(idx)}
                     title="Remove from slot"
-                    aria-label={`Remove ${video.title} from Slot 0${idx + 1}`}
+                    aria-label={`Remove ${video.title} from Slot ${(idx + 1) < 10 ? '0' + (idx + 1) : idx + 1}`}
                   >
                     &times;
                   </button>

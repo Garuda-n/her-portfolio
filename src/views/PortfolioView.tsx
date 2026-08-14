@@ -32,7 +32,7 @@ export const PortfolioView: React.FC = () => {
   return (
     <div className="portfolio-view">
       {/* Hero Section */}
-      <section className="hero-section">
+      <section id="home" className="hero-section">
         <div className="hero-content">
           <span className="hero-subtitle">FILM EDITOR & COLORIST</span>
           <h1 className="hero-title">
@@ -122,9 +122,19 @@ export const PortfolioView: React.FC = () => {
       <section id="about" className="about-section">
         <div className="about-grid">
           <div className="about-visual">
-            {/* Elegant cinematic visual placeholder */}
             <div className="about-card-placeholder">
-              <div className="placeholder-brand">FORHER</div>
+              <img 
+                src="/profile.png" 
+                alt="Visual Storyteller Profile" 
+                style={{ 
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover'
+                }} 
+              />
             </div>
           </div>
           <div className="about-details">
@@ -136,6 +146,17 @@ export const PortfolioView: React.FC = () => {
             <p>
               My expertise lies in handling narrative structure, fine-tuning transitions, color grading across log profiles, and exporting clean mastering deliverables.
             </p>
+            <div style={{ marginTop: '1.5rem', marginBottom: '2.5rem' }}>
+              <a 
+                href="/resume.pdf" 
+                download="FORHER_Resume.pdf" 
+                className="btn btn-outline"
+                style={{ gap: '0.6rem' }}
+              >
+                <span>Download Resume</span>
+                <span>📥</span>
+              </a>
+            </div>
             
             <div className="skills-grid">
               <div className="skill-item">
@@ -170,6 +191,9 @@ export const PortfolioView: React.FC = () => {
           <div className="contact-methods">
             <a href="mailto:hello@forher.com" className="contact-btn">
               hello@forher.com
+            </a>
+            <a href="tel:+916379160139" className="contact-btn">
+              +91 6379160139
             </a>
           </div>
         </div>

@@ -51,8 +51,9 @@
       "category": "Commercial",
       "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
       "thumbnailUrl": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
-      "featured": false,
-      "createdAt": "2026-04-18"
+      "featured": true,
+      "createdAt": "2026-04-18",
+      "featuredSlot": 4
     },
     {
       "id": "video-006",

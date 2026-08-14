@@ -2,6 +2,30 @@ import React, { useState, useMemo } from 'react';
 import { useVideoContext } from '../../context/VideoContext';
 import type { Video } from '../../types/video';
 
+const FeaturedVideoPreview: React.FC<{ src: string }> = ({ src }) => {
+  const [hasError, setHasError] = React.useState(false);
+  if (hasError) {
+    return (
+      <div className="video-card-fallback-preview" style={{ position: 'relative' }}>
+        <svg viewBox="0 0 24 24" fill="currentColor" className="fallback-preview-icon">
+          <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4zM14 13H6V11H14V13Z" />
+        </svg>
+      </div>
+    );
+  }
+  return (
+    <video
+      src={src}
+      className="video-card-preview"
+      muted
+      playsInline
+      preload="metadata"
+      onError={() => setHasError(true)}
+      style={{ pointerEvents: 'none', width: '100%', height: '100%', objectFit: 'cover' }}
+    />
+  );
+};
+
 export const FeaturedTab: React.FC = () => {
   const { videos, slotsCount, updateFeaturedSlots, addSlot, deleteSlot, isSaving } = useVideoContext();
   const [draggedOverSlot, setDraggedOverSlot] = useState<number | null>(null);
@@ -163,7 +187,11 @@ export const FeaturedTab: React.FC = () => {
                   onDragStart={(e) => handleDragStart(e, video, idx)}
                 >
                   <div className="drag-card-thumb">
-                    <img src={video.thumbnailUrl} alt={video.title} />
+                    {video.thumbnailUrl ? (
+                      <img src={video.thumbnailUrl} alt={video.title} />
+                    ) : (
+                      <FeaturedVideoPreview src={video.videoUrl} />
+                    )}
                     <div className="drag-handle-overlay">
                       <span>Drag to Swap</span>
                     </div>
@@ -245,7 +273,11 @@ export const FeaturedTab: React.FC = () => {
                   onDragStart={(e) => handleDragStart(e, video)}
                 >
                   <div className="pool-item-thumb">
-                    <img src={video.thumbnailUrl} alt={video.title} />
+                    {video.thumbnailUrl ? (
+                      <img src={video.thumbnailUrl} alt={video.title} />
+                    ) : (
+                      <FeaturedVideoPreview src={video.videoUrl} />
+                    )}
                   </div>
                   <div className="pool-item-meta">
                     <span className="pool-item-title">{video.title}</span>

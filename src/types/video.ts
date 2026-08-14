@@ -4,7 +4,7 @@ export interface Video {
   description: string;
   category: string;
   videoUrl: string;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   featured: boolean;
   featuredSlot?: number;
   createdAt: string;

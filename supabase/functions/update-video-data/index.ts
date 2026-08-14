@@ -13,7 +13,7 @@ interface Video {
   description: string;
   category: string;
   videoUrl: string;
-  thumbnailUrl: string;
+  thumbnailUrl?: string;
   featured: boolean;
   featuredSlot?: number;
   createdAt: string;
@@ -114,11 +114,14 @@ Deno.serve(async (req) => {
       if (!v.description || typeof v.description !== 'string' || !v.description.trim()) return 'Description is required.';
       if (!v.category || typeof v.category !== 'string' || !v.category.trim()) return 'Category is required.';
       if (!v.videoUrl || typeof v.videoUrl !== 'string' || !v.videoUrl.trim()) return 'Video URL is required.';
-      if (!v.thumbnailUrl || typeof v.thumbnailUrl !== 'string' || !v.thumbnailUrl.trim()) return 'Thumbnail URL is required.';
       
       // Simple format check for URLs
       if (!v.videoUrl.startsWith('http://') && !v.videoUrl.startsWith('https://')) return 'Invalid Video URL format.';
-      if (!v.thumbnailUrl.startsWith('http://') && !v.thumbnailUrl.startsWith('https://')) return 'Invalid Thumbnail URL format.';
+      
+      if (v.thumbnailUrl !== undefined && v.thumbnailUrl !== null && v.thumbnailUrl !== '') {
+        if (typeof v.thumbnailUrl !== 'string') return 'Thumbnail URL must be a string.';
+        if (!v.thumbnailUrl.startsWith('http://') && !v.thumbnailUrl.startsWith('https://')) return 'Invalid Thumbnail URL format.';
+      }
       
       return null;
     };
@@ -146,7 +149,7 @@ Deno.serve(async (req) => {
         description: payload.description.trim(),
         category: payload.category.trim(),
         videoUrl: payload.videoUrl.trim(),
-        thumbnailUrl: payload.thumbnailUrl.trim(),
+        thumbnailUrl: (payload.thumbnailUrl && typeof payload.thumbnailUrl === 'string' && payload.thumbnailUrl.trim()) ? payload.thumbnailUrl.trim() : undefined,
         featured: false,
         createdAt: new Date().toISOString().split('T')[0]
       };
@@ -177,7 +180,7 @@ Deno.serve(async (req) => {
         description: payload.description.trim(),
         category: payload.category.trim(),
         videoUrl: payload.videoUrl.trim(),
-        thumbnailUrl: payload.thumbnailUrl.trim(),
+        thumbnailUrl: (payload.thumbnailUrl && typeof payload.thumbnailUrl === 'string' && payload.thumbnailUrl.trim()) ? payload.thumbnailUrl.trim() : undefined,
         featured: typeof payload.featured === 'boolean' ? payload.featured : existingVideo.featured,
         featuredSlot: typeof payload.featuredSlot === 'number' ? payload.featuredSlot : existingVideo.featuredSlot
       };

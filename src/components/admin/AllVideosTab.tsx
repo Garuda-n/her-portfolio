@@ -92,7 +92,13 @@ export const AllVideosTab: React.FC<AllVideosTabProps> = ({ onPreviewVideo }) =>
                   <td>
                     <div className="table-video-info">
                       <div className="table-video-thumb">
-                        <img src={video.thumbnailUrl} alt={video.title} />
+                        {video.thumbnailUrl ? (
+                          <img src={video.thumbnailUrl} alt={video.title} />
+                        ) : (
+                          <div className="table-video-thumb-fallback" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-tertiary)', fontSize: '0.8rem' }}>
+                            📹
+                          </div>
+                        )}
                       </div>
                       <div className="table-video-meta">
                         <span className="table-video-title">{video.title}</span>

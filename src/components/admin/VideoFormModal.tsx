@@ -28,7 +28,7 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
       setTitle(videoToEdit.title);
       setCategory(videoToEdit.category);
       setVideoUrl(videoToEdit.videoUrl);
-      setThumbnailUrl(videoToEdit.thumbnailUrl);
+      setThumbnailUrl(videoToEdit.thumbnailUrl || '');
       setDescription(videoToEdit.description);
     } else {
       setTitle('');
@@ -47,7 +47,6 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
     if (!title.trim()) newErrors.title = 'Title is required';
     if (!category.trim()) newErrors.category = 'Category is required';
     if (!videoUrl.trim()) newErrors.videoUrl = 'Video URL is required';
-    if (!thumbnailUrl.trim()) newErrors.thumbnailUrl = 'Thumbnail URL is required';
     if (!description.trim()) newErrors.description = 'Description is required';
     
     setErrors(newErrors);
@@ -61,7 +60,7 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
         title: title.trim(),
         category: category.trim(),
         videoUrl: videoUrl.trim(),
-        thumbnailUrl: thumbnailUrl.trim(),
+        thumbnailUrl: thumbnailUrl.trim() || undefined,
         description: description.trim()
       });
     }
@@ -136,6 +135,9 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
               placeholder="https://images.unsplash.com/photo-..."
               className={errors.thumbnailUrl ? 'input-error' : ''}
             />
+            <span className="field-hint" style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>
+              Optional — if omitted, the video preview will be used.
+            </span>
             {errors.thumbnailUrl && <span className="error-text">{errors.thumbnailUrl}</span>}
           </div>
 

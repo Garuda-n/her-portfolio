@@ -70,9 +70,8 @@
       "description": "Deep narrative short film trailer. Muted tones, suspenseful framing, and lingering character close-ups that emphasize emotional tension.",
       "category": "Cinematic",
       "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
-      "featured": true,
-      "createdAt": "2026-02-12",
-      "featuredSlot": 4
+      "featured": false,
+      "createdAt": "2026-02-12"
     }
   ]
 }

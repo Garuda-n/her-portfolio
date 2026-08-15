@@ -1,6 +1,13 @@
 import React, { useRef, useState } from 'react';
 import type { Video } from '../../types/video';
-import { normalizeVideoUrl, normalizeThumbnailUrl } from '../../utils/videoUtils';
+import { 
+  normalizeVideoUrl, 
+  normalizeThumbnailUrl,
+  isGoogleDriveUrl,
+  isYouTubeUrl,
+  extractYouTubeId,
+  isVimeoUrl
+} from '../../utils/videoUtils';
 
 interface VideoCardProps {
   video: Video;
@@ -17,10 +24,22 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, onPreview }) => {
       (window.matchMedia('(hover: none)').matches || 'ontouchstart' in window);
   };
 
+  const resolvedThumbnailUrl = video.thumbnailUrl 
+    ? normalizeThumbnailUrl(video.thumbnailUrl) 
+    : (isGoogleDriveUrl(video.videoUrl) 
+      ? normalizeThumbnailUrl(video.videoUrl) 
+      : (isYouTubeUrl(video.videoUrl) 
+        ? `https://img.youtube.com/vi/${extractYouTubeId(video.videoUrl)}/hqdefault.jpg` 
+        : undefined
+      )
+    );
+  const hasThumbnail = !!resolvedThumbnailUrl;
+  const isEmbed = isGoogleDriveUrl(video.videoUrl) || isYouTubeUrl(video.videoUrl) || isVimeoUrl(video.videoUrl);
+
   const handleMouseEnter = () => {
     if (isTouchDevice()) return;
     setIsHovered(true);
-    if ((video.featured || !video.thumbnailUrl) && videoRef.current && !hasError) {
+    if ((video.featured || !hasThumbnail) && videoRef.current && !hasError) {
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch((error) => {
@@ -33,7 +52,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, onPreview }) => {
   const handleMouseLeave = () => {
     if (isTouchDevice()) return;
     setIsHovered(false);
-    if ((video.featured || !video.thumbnailUrl) && videoRef.current && !hasError) {
+    if ((video.featured || !hasThumbnail) && videoRef.current && !hasError) {
       try {
         videoRef.current.pause();
         videoRef.current.currentTime = 0;
@@ -44,9 +63,9 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, onPreview }) => {
   };
 
   // Show video if:
-  // - There is no thumbnail AND no error (standard thumbnail-free preview)
-  // - OR there IS a thumbnail AND the video is featured AND no error (hover play)
-  const showVideo = (!video.thumbnailUrl && !hasError) || (!!video.thumbnailUrl && video.featured && !hasError);
+  // - It is not an embedded YouTube/Drive/Vimeo video
+  // - AND (There is no thumbnail AND no error OR there IS a thumbnail and video is featured)
+  const showVideo = !isEmbed && ((!hasThumbnail && !hasError) || (hasThumbnail && video.featured && !hasError));
 
   return (
     <div 
@@ -56,9 +75,9 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, onPreview }) => {
       onMouseLeave={handleMouseLeave}
     >
       <div className={`video-card-thumbnail-wrapper ${video.aspectRatio === '9:16' ? 'video-card-vertical' : ''}`}>
-        {video.thumbnailUrl && (
+        {hasThumbnail && (
           <img 
-            src={normalizeThumbnailUrl(video.thumbnailUrl)} 
+            src={resolvedThumbnailUrl} 
             alt={video.title} 
             className="video-card-thumbnail"
             loading="lazy"
@@ -74,12 +93,12 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, onPreview }) => {
             preload="metadata"
             onError={() => setHasError(true)}
             style={{
-              opacity: !video.thumbnailUrl || isHovered ? 1 : 0,
+              opacity: !hasThumbnail || isHovered ? 1 : 0,
               pointerEvents: 'none'
             }}
           />
         )}
-        {!video.thumbnailUrl && hasError && (
+        {!hasThumbnail && hasError && (
           <div className="video-card-fallback-preview">
             <svg 
               viewBox="0 0 24 24" 

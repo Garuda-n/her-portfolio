@@ -52,6 +52,17 @@
       "aspectRatio": "16:9",
       "status": "active",
       "featuredSlot": 1
+    },
+    {
+      "id": "video-1786772925469",
+      "title": "Rathu song",
+      "description": "Karuppu song.",
+      "category": "Music Video",
+      "videoUrl": "https://youtu.be/lx5k7yHTbbM?si=k3PiPvGt6wFn9p_E",
+      "featured": false,
+      "createdAt": "2026-08-15",
+      "aspectRatio": "16:9",
+      "status": "active"
     }
   ]
 }

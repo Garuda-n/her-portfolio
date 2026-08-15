@@ -36,11 +36,11 @@ export const PortfolioView: React.FC = () => {
         <div className="hero-content">
           <span className="hero-subtitle">FILM EDITOR & COLORIST</span>
           <h1 className="hero-title">
-            Shaping stories through <br />
-            <span className="hero-title-gradient">motion and rhythm</span>.
+            Edit with Intent <br />
+            <span className="hero-title-gradient">Deliver with Impact</span>.
           </h1>
           <p className="hero-lead">
-            Collaborating with directors and brands to craft compelling cinematic experiences with high visual precision.
+            Video Editor with 2 years of experience in social media reels, YouTube content, and e-commerce videos.
           </p>
           <div className="hero-actions">
             <a 
@@ -51,9 +51,9 @@ export const PortfolioView: React.FC = () => {
                 document.getElementById('featured')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              Explore Featured Work
+              View My Edits
             </a>
-            <a 
+            {/* <a 
               href="#contact" 
               className="btn btn-outline"
               onClick={(e) => {
@@ -62,7 +62,7 @@ export const PortfolioView: React.FC = () => {
               }}
             >
               Get In Touch
-            </a>
+            </a> */}
           </div>
         </div>
         <div className="hero-background-gradient" />
@@ -124,7 +124,7 @@ export const PortfolioView: React.FC = () => {
           <div className="about-visual">
             <div className="about-card-placeholder">
               <img 
-                src="/profile.png" 
+                src={`${import.meta.env.BASE_URL}profile.png`} 
                 alt="Visual Storyteller Profile" 
                 style={{ 
                   position: 'absolute',
@@ -139,16 +139,19 @@ export const PortfolioView: React.FC = () => {
           </div>
           <div className="about-details">
             <span className="section-tag">ABOUT ME</span>
-            <h2 className="section-title">Visual Storyteller</h2>
+            <h2 className="section-title">Hi, I’m Karthika.</h2>
             <p>
-              I am a professional film editor and colorist. I focus on carving out human emotion, matching pacing to sound design, and maintaining high technical quality.
+              A Video Editor with 2 years of experience in social media and e-commerce content.
             </p>
             <p>
-              My expertise lies in handling narrative structure, fine-tuning transitions, color grading across log profiles, and exporting clean mastering deliverables.
+              I enjoy turning raw footage into simple, engaging, and visually appealing videos. I focus on clean cuts, smooth transitions, good pacing, and storytelling that keeps viewers interested.
+            </p>
+            <p>
+              To me, great editing is about making every moment feel natural. When the cuts, pacing, and visuals work together, the audience stays focused on the story without thinking about the edit. That’s the kind of experience I aim to create in every project
             </p>
             <div style={{ marginTop: '1.5rem', marginBottom: '2.5rem' }}>
               <a 
-                href="/resume.pdf" 
+                href={`${import.meta.env.BASE_URL}resume.pdf`} 
                 download="FORHER_Resume.pdf" 
                 className="btn btn-outline"
                 style={{ gap: '0.6rem' }}
@@ -184,16 +187,16 @@ export const PortfolioView: React.FC = () => {
       <section id="contact" className="contact-section">
         <div className="contact-card">
           <span className="section-tag">COLLABORATION</span>
-          <h2 className="contact-title">Let's craft your next project together</h2>
-          <p className="contact-lead">
+          <h2 className="contact-title">Let’s work together</h2>
+          {/* <p className="contact-lead">
             Available for film editing, commercial projects, color grading, and remote post-production consultations.
-          </p>
+          </p> */}
           <div className="contact-methods">
             <a href="mailto:hello@forher.com" className="contact-btn">
               hello@forher.com
             </a>
-            <a href="tel:+916379160139" className="contact-btn">
-              +91 6379160139
+            <a href="tel:+916380865947" className="contact-btn">
+              +91 6380865947
             </a>
           </div>
         </div>

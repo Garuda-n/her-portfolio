@@ -366,6 +366,10 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #000;
 }
 
+.video-card-thumbnail-wrapper.video-card-vertical {
+  /* padding-top: 177.78%; */ /* Disabled to keep card dimensions/height uniform across vertical and horizontal videos */
+}
+
 .video-card-thumbnail {
   position: absolute;
   top: 0;
@@ -495,7 +499,7 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 4rem;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .about-visual {
@@ -653,7 +657,8 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   width: 100%;
-  max-width: 960px;
+  max-width: min(960px, 95vw);
+  max-height: 90vh;
   overflow: hidden;
   position: relative;
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
@@ -678,8 +683,18 @@ h1, h2, h3, h4, h5, h6 {
 .video-modal-player-wrapper {
   position: relative;
   width: 100%;
-  padding-top: 56.25%; /* 16:9 aspect ratio */
-  background-color: #00;
+  aspect-ratio: 16 / 9; /* 16:9 aspect ratio */
+  background-color: #000;
+  max-height: 55vh;
+}
+
+.video-modal-content.video-modal-vertical {
+  max-width: min(420px, 95vw);
+}
+
+.video-modal-content.video-modal-vertical .video-modal-player-wrapper {
+  aspect-ratio: 9 / 16; /* 9:16 aspect ratio */
+  max-height: 55vh;
 }
 
 .video-modal-player {
@@ -689,6 +704,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   border: none;
+  object-fit: contain;
 }
 
 .video-modal-placeholder {
@@ -923,7 +939,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   
   .video-modal-content {
-    max-height: 95vh;
+    max-height: 90vh;
   }
   
   .video-modal-title {

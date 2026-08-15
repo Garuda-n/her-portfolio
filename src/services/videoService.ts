@@ -1,11 +1,11 @@
 import type { Video } from '../types/video';
 import videosData from '../data/video.json';
 
-const videos: Video[] = Array.isArray(videosData) 
+const videos: Video[] = (Array.isArray(videosData) 
   ? (videosData as Video[]) 
   : (videosData && typeof videosData === 'object' && Array.isArray((videosData as any).videos)) 
     ? ((videosData as any).videos as Video[]) 
-    : [];
+    : []).filter(v => v.status !== 'deleted');
 
 export const getVideos = (): Video[] => {
   return videos;

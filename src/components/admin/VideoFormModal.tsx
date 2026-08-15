@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { Video } from '../../types/video';
 import { useVideoContext } from '../../context/VideoContext';
+import { normalizeVideoUrl, normalizeThumbnailUrl } from '../../utils/videoUtils';
 
 interface VideoFormModalProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
   const [videoUrl, setVideoUrl] = useState('');
   const [thumbnailUrl, setThumbnailUrl] = useState('');
   const [description, setDescription] = useState('');
+  const [aspectRatio, setAspectRatio] = useState<'16:9' | '9:16'>('16:9');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -30,12 +32,14 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
       setVideoUrl(videoToEdit.videoUrl);
       setThumbnailUrl(videoToEdit.thumbnailUrl || '');
       setDescription(videoToEdit.description);
+      setAspectRatio(videoToEdit.aspectRatio || '16:9');
     } else {
       setTitle('');
       setCategory('');
       setVideoUrl('');
       setThumbnailUrl('');
       setDescription('');
+      setAspectRatio('16:9');
     }
     setErrors({});
   }, [videoToEdit, isOpen]);
@@ -59,9 +63,10 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
       onSubmit({
         title: title.trim(),
         category: category.trim(),
-        videoUrl: videoUrl.trim(),
-        thumbnailUrl: thumbnailUrl.trim() || undefined,
-        description: description.trim()
+        videoUrl: normalizeVideoUrl(videoUrl.trim()),
+        thumbnailUrl: thumbnailUrl.trim() ? normalizeThumbnailUrl(thumbnailUrl.trim()) : undefined,
+        description: description.trim(),
+        aspectRatio: aspectRatio
       });
     }
   };
@@ -122,6 +127,29 @@ export const VideoFormModal: React.FC<VideoFormModalProps> = ({
               className={errors.videoUrl ? 'input-error' : ''}
             />
             {errors.videoUrl && <span className="error-text">{errors.videoUrl}</span>}
+          </div>
+
+          {/* Aspect Ratio Field */}
+          <div className="form-group">
+            <label htmlFor="form-aspect-ratio">Aspect Ratio</label>
+            <select 
+              id="form-aspect-ratio" 
+              value={aspectRatio} 
+              onChange={(e) => setAspectRatio(e.target.value as '16:9' | '9:16')}
+              style={{
+                width: '100%',
+                padding: '0.75rem 1rem',
+                borderRadius: '6px',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--bg-tertiary)',
+                color: 'var(--text-primary)',
+                outline: 'none',
+                fontFamily: 'inherit'
+              }}
+            >
+              <option value="16:9">Horizontal / Landscape (16:9)</option>
+              <option value="9:16">Vertical / Portrait (9:16)</option>
+            </select>
           </div>
 
           {/* Thumbnail URL Field */}

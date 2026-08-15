@@ -8,4 +8,6 @@ export interface Video {
   featured: boolean;
   featuredSlot?: number;
   createdAt: string;
+  aspectRatio?: '16:9' | '9:16';
+  status?: 'active' | 'deleted';
 }

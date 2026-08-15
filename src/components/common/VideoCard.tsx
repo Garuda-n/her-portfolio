@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import type { Video } from '../../types/video';
+import { normalizeVideoUrl, normalizeThumbnailUrl } from '../../utils/videoUtils';
 
 interface VideoCardProps {
   video: Video;
@@ -54,10 +55,10 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, onPreview }) => {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      <div className="video-card-thumbnail-wrapper">
+      <div className={`video-card-thumbnail-wrapper ${video.aspectRatio === '9:16' ? 'video-card-vertical' : ''}`}>
         {video.thumbnailUrl && (
           <img 
-            src={video.thumbnailUrl} 
+            src={normalizeThumbnailUrl(video.thumbnailUrl)} 
             alt={video.title} 
             className="video-card-thumbnail"
             loading="lazy"
@@ -66,7 +67,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video, onPreview }) => {
         {showVideo && (
           <video 
             ref={videoRef}
-            src={video.videoUrl} 
+            src={normalizeVideoUrl(video.videoUrl)} 
             className="video-card-preview"
             muted
             playsInline

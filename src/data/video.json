@@ -20,8 +20,7 @@
       "category": "Commercial",
       "videoUrl": "https://www.w3schools.com/html/movie.mp4",
       "thumbnailUrl": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-      "featured": true,
-      "featuredSlot": 2,
+      "featured": false,
       "createdAt": "2026-06-15",
       "aspectRatio": "16:9",
       "status": "active"

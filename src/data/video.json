@@ -68,10 +68,11 @@
       "description": "Sample video",
       "category": "Cinematic",
       "videoUrl": "https://youtu.be/ivukpkSMoYQ?si=XSEN9O4TYyKStMmT",
-      "featured": false,
+      "featured": true,
       "createdAt": "2026-08-15",
       "aspectRatio": "9:16",
-      "status": "active"
+      "status": "active",
+      "featuredSlot": 3
     }
   ]
 }

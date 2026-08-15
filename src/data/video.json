@@ -45,17 +45,6 @@
       "createdAt": "2026-08-01"
     },
     {
-      "id": "video-005",
-      "title": "Aura Fashion Showcase",
-      "description": "High-fashion showcase video highlighting luxury apparel textures and flowing fabrics. Uses smooth slow-motion and soft-glow lenses to capture details.",
-      "category": "Commercial",
-      "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
-      "thumbnailUrl": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80",
-      "featured": true,
-      "createdAt": "2026-04-18",
-      "featuredSlot": 1
-    },
-    {
       "id": "video-1786716722288",
       "title": "NFS",
       "description": "NFS Most wanted BMW M3 🔥❤️‍🔥",

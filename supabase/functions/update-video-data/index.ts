@@ -110,6 +110,15 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Read-only sync: return the live GitHub state as-is, no commit involved.
+    // Used by the admin console so it never acts on data baked into an old site build.
+    if (action === 'list') {
+      return new Response(
+        JSON.stringify({ success: true, slotsCount, videos }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Helper functions for validating video properties
     const validateVideoFields = (v: any) => {
       if (!v.title || typeof v.title !== 'string' || !v.title.trim()) return 'Title is required.';
@@ -400,7 +409,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        message: `admin: update video.json [skip ci]`,
+        message: `admin: update video.json`,
         content: base64Content,
         sha: currentSha
       })
@@ -426,7 +435,9 @@ Deno.serve(async (req) => {
       JSON.stringify({
         success: true,
         commitSha: commitData.commit.sha,
-        path: commitData.content.path
+        path: commitData.content.path,
+        slotsCount,
+        videos
       }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

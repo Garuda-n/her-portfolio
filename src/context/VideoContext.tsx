@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Video } from '../types/video';
 import { getVideos as initialFetch, getSlotsCount } from '../services/videoService';
 import { supabase } from '../services/supabaseClient';
+import { useAuthContext } from './AuthContext';
 
 interface ToastData {
   message: string;
@@ -26,16 +27,39 @@ interface VideoContextType {
 const VideoContext = createContext<VideoContextType | undefined>(undefined);
 
 export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuthContext();
   const [videos, setVideos] = useState<Video[]>([]);
   const [slotsCount, setSlotsCount] = useState<number>(4);
   const [toast, setToast] = useState<ToastData | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Initialize data on load
+  // Initialize data on load from the bundled snapshot (fine for the public portfolio,
+  // which only needs to reflect the last deploy).
   useEffect(() => {
     setVideos(initialFetch());
     setSlotsCount(getSlotsCount());
   }, []);
+
+  // The admin console can't rely on the bundled snapshot: it can be older than the
+  // real data on GitHub. As soon as an admin session starts, pull the live state so
+  // the console always matches what a mutation will actually be validated against.
+  useEffect(() => {
+    if (!user) return;
+
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase.functions.invoke('update-video-data', {
+        body: { action: 'list', payload: {} }
+      });
+      if (cancelled || error || !data?.success) return;
+      setVideos((data.videos as Video[]).filter(v => v.status !== 'deleted'));
+      setSlotsCount(data.slotsCount);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
@@ -51,11 +75,14 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [toast]);
 
-  // General server-side function mediator call
+  // General server-side function mediator call. On success, the Edge Function returns
+  // the exact videos/slotsCount it just committed to GitHub — reconcile local state to
+  // that instead of trusting the optimistic patch, so the admin's view can never drift
+  // from what's actually on GitHub.
   const invokePersistenceApi = async (
-    action: string, 
+    action: string,
     payload: any
-  ): Promise<{ success: boolean; error?: string }> => {
+  ): Promise<{ success: boolean; error?: string; videos?: Video[]; slotsCount?: number }> => {
     setIsSaving(true);
     try {
       const { data, error } = await supabase.functions.invoke('update-video-data', {
@@ -68,11 +95,20 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (data?.error) {
         return { success: false, error: data.error };
       }
-      return { success: true };
+      return { success: true, videos: data?.videos, slotsCount: data?.slotsCount };
     } catch (err: any) {
       return { success: false, error: err?.message || 'Network connection failed.' };
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const reconcileFromServer = (res: { videos?: Video[]; slotsCount?: number }) => {
+    if (res.videos) {
+      setVideos(res.videos.filter(v => v.status !== 'deleted'));
+    }
+    if (typeof res.slotsCount === 'number') {
+      setSlotsCount(res.slotsCount);
     }
   };
 
@@ -106,6 +142,7 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
 
+    reconcileFromServer(res);
     showToast('Changes saved to GitHub.', 'success');
     return true;
   };
@@ -143,6 +180,7 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
 
+    reconcileFromServer(res);
     showToast('Changes saved to GitHub.', 'success');
     return true;
   };
@@ -162,6 +200,7 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
 
+    reconcileFromServer(res);
     showToast('Changes saved to GitHub.', 'success');
     return true;
   };
@@ -207,6 +246,7 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
 
+    reconcileFromServer(res);
     showToast('Changes saved to GitHub.', 'success');
     return true;
   };
@@ -244,6 +284,7 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
 
+    reconcileFromServer(res);
     showToast('Changes saved to GitHub.', 'success');
     return true;
   };
@@ -262,6 +303,7 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
 
+    reconcileFromServer(res);
     showToast('Showcase slot added successfully.', 'success');
     return true;
   };
@@ -299,6 +341,7 @@ export const VideoProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       return false;
     }
 
+    reconcileFromServer(res);
     showToast('Showcase slot deleted successfully.', 'success');
     return true;
   };

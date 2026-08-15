@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useVideoContext } from '../../context/VideoContext';
 import type { Video } from '../../types/video';
+import { normalizeVideoUrl, normalizeThumbnailUrl } from '../../utils/videoUtils';
 
 const FeaturedVideoPreview: React.FC<{ src: string }> = ({ src }) => {
   const [hasError, setHasError] = React.useState(false);
@@ -15,7 +16,7 @@ const FeaturedVideoPreview: React.FC<{ src: string }> = ({ src }) => {
   }
   return (
     <video
-      src={src}
+      src={normalizeVideoUrl(src)}
       className="video-card-preview"
       muted
       playsInline
@@ -188,7 +189,7 @@ export const FeaturedTab: React.FC = () => {
                 >
                   <div className="drag-card-thumb">
                     {video.thumbnailUrl ? (
-                      <img src={video.thumbnailUrl} alt={video.title} />
+                      <img src={normalizeThumbnailUrl(video.thumbnailUrl)} alt={video.title} />
                     ) : (
                       <FeaturedVideoPreview src={video.videoUrl} />
                     )}

@@ -17,6 +17,8 @@ interface Video {
   featured: boolean;
   featuredSlot?: number;
   createdAt: string;
+  aspectRatio?: '16:9' | '9:16';
+  status?: 'active' | 'deleted';
 }
 
 Deno.serve(async (req) => {
@@ -151,7 +153,9 @@ Deno.serve(async (req) => {
         videoUrl: payload.videoUrl.trim(),
         thumbnailUrl: (payload.thumbnailUrl && typeof payload.thumbnailUrl === 'string' && payload.thumbnailUrl.trim()) ? payload.thumbnailUrl.trim() : undefined,
         featured: false,
-        createdAt: new Date().toISOString().split('T')[0]
+        createdAt: new Date().toISOString().split('T')[0],
+        aspectRatio: payload.aspectRatio || '16:9',
+        status: payload.status || 'active'
       };
 
       videos.push(newVideo);
@@ -174,6 +178,13 @@ Deno.serve(async (req) => {
       }
 
       const existingVideo = videos[index];
+      if (existingVideo.status === 'deleted') {
+        return new Response(
+          JSON.stringify({ error: 'Cannot update a deleted video.' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       videos[index] = {
         ...existingVideo,
         title: payload.title.trim(),
@@ -182,7 +193,9 @@ Deno.serve(async (req) => {
         videoUrl: payload.videoUrl.trim(),
         thumbnailUrl: (payload.thumbnailUrl && typeof payload.thumbnailUrl === 'string' && payload.thumbnailUrl.trim()) ? payload.thumbnailUrl.trim() : undefined,
         featured: typeof payload.featured === 'boolean' ? payload.featured : existingVideo.featured,
-        featuredSlot: typeof payload.featuredSlot === 'number' ? payload.featuredSlot : existingVideo.featuredSlot
+        featuredSlot: typeof payload.featuredSlot === 'number' ? payload.featuredSlot : existingVideo.featuredSlot,
+        aspectRatio: payload.aspectRatio || existingVideo.aspectRatio || '16:9',
+        status: payload.status || existingVideo.status || 'active'
       };
 
       // Reset featured slot if featured toggled off
@@ -194,11 +207,13 @@ Deno.serve(async (req) => {
       const index = videos.findIndex(v => v.id === payload.id);
       if (index === -1) {
         return new Response(
-          JSON.stringify({ error: `Video cut not found: ${payload.id}` }),
-          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({ success: true, message: 'Video cut already deleted.' }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
-      videos.splice(index, 1);
+      videos[index].status = 'deleted';
+      videos[index].featured = false;
+      videos[index].featuredSlot = undefined;
 
     } else if (action === 'toggleFeatured') {
       const index = videos.findIndex(v => v.id === payload.id);
@@ -210,6 +225,12 @@ Deno.serve(async (req) => {
       }
 
       const video = videos[index];
+      if (video.status === 'deleted') {
+        return new Response(
+          JSON.stringify({ error: 'Cannot feature a deleted video.' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
       if (!video.featured) {
         // Toggle on: Check limit (max slotsCount)
         const featuredCount = videos.filter(v => v.featured).length;

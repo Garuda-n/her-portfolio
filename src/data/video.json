@@ -33,11 +33,10 @@
       "category": "Music Video",
       "videoUrl": "https://www.w3schools.com/html/mov_bbb.mp4",
       "thumbnailUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=800&q=80",
-      "featured": true,
+      "featured": false,
       "createdAt": "2026-07-20",
       "aspectRatio": "16:9",
-      "status": "active",
-      "featuredSlot": 3
+      "status": "active"
     },
     {
       "id": "video-004",
